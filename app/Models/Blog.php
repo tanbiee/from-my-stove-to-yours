@@ -12,9 +12,17 @@ class Blog extends Model
     protected $fillable = [
         'title',
         'category',
+        'tags',
         'content',
         'cover_image_url',
         'is_featured',
         'read_time_min',
+        'likes',
+    ];
+
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'likes'       => 'integer',
+        'tags'        => 'array',
     ];
 }

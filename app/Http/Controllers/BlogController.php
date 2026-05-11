@@ -7,40 +7,137 @@ use App\Models\Blog;
 
 class BlogController extends Controller
 {
-    public function index()
+    // All available categories
+    public static array $categories = [
+        'Italian'           => '🍝',
+        'Asian'             => '🍜',
+        'Mexican'           => '🌮',
+        'Indian'            => '🍛',
+        'French'            => '🥐',
+        'Mediterranean'     => '🫒',
+        'American'          => '🍔',
+        'Middle Eastern'    => '🧆',
+        'Japanese'          => '🍱',
+        'Thai'              => '🍲',
+        'Baking & Pastry'   => '🥧',
+        'Vegan & Plant-Based' => '🥗',
+        'Street Food'       => '🌯',
+        'Desserts'          => '🍰',
+        'Breakfast & Brunch'=> '🥞',
+        'Seafood'           => '🦞',
+        'BBQ & Grilling'    => '🔥',
+        'Drinks & Cocktails'=> '🍹',
+        'Food Science'      => '🔬',
+        'Tips & Techniques' => '🔪',
+        'Meal Planning'     => '📅',
+        'Food Travel'       => '✈️',
+        'Personal Stories'  => '📖',
+    ];
+
+    public function index(Request $request)
     {
-        $featuredBlog = Blog::where('is_featured', true)->first();
-        $blogs = Blog::when($featuredBlog, function ($query) use ($featuredBlog) {
-            return $query->where('_id', '!=', $featuredBlog->_id);
-        })->get();
-        
-        return view('blogs.index', compact('blogs', 'featuredBlog'));
+        $featuredBlog = Blog::orderBy('likes', 'desc')->first();
+
+        $query = Blog::query();
+
+        // Exclude featured from the grid
+        if ($featuredBlog) {
+            $query->where('_id', '!=', $featuredBlog->_id);
+        }
+
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Full-text search (title + content)
+        if ($request->filled('search')) {
+            $term = $request->search;
+            $query->where(function ($q) use ($term) {
+                $q->where('title', 'regex', "/$term/i")
+                  ->orWhere('content', 'regex', "/$term/i")
+                  ->orWhere('tags', 'elemMatch', ['$regex' => $term, '$options' => 'i']);
+            });
+        }
+
+        // Sort
+        switch ($request->get('sort', 'newest')) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'likes':
+                $query->orderBy('likes', 'desc');
+                break;
+            case 'read_time':
+                $query->orderBy('read_time_min', 'asc');
+                break;
+            default: // newest
+                $query->latest();
+        }
+
+        $blogs = $query->get();
+
+        return view('blogs.index', compact('blogs', 'featuredBlog'))
+            ->with('categories', self::$categories)
+            ->with('currentSort', $request->get('sort', 'newest'))
+            ->with('currentCategory', $request->get('category', ''))
+            ->with('currentSearch', $request->get('search', ''));
+    }
+
+    public function show(string $id)
+    {
+        $blog     = Blog::findOrFail($id);
+        $related  = Blog::where('category', $blog->category)
+                        ->where('_id', '!=', $blog->_id)
+                        ->latest()
+                        ->limit(3)
+                        ->get();
+
+        return view('blogs.show', compact('blog', 'related'))
+            ->with('categories', self::$categories);
     }
 
     public function create()
     {
-        return view('blogs.create');
+        return view('blogs.create')->with('categories', self::$categories);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string',
-            'content' => 'required|string',
-            'cover_image_url' => 'nullable|url',
-            'read_time_min' => 'required|integer|min:1',
+            'title'          => 'required|string|max:255',
+            'category'       => 'required|string',
+            'tags'           => 'nullable|string',
+            'content'        => 'required|string',
+            'cover_image_url'=> 'nullable|url',
+            'read_time_min'  => 'required|integer|min:1',
         ]);
+
+        // Parse comma-separated tags
+        $tags = [];
+        if ($request->filled('tags')) {
+            $tags = array_map('trim', explode(',', $request->tags));
+            $tags = array_filter($tags);
+        }
 
         Blog::create([
-            'title' => $request->title,
-            'category' => $request->category,
-            'content' => $request->content,
-            'cover_image_url' => $request->cover_image_url ?? 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-            'is_featured' => $request->has('is_featured'),
-            'read_time_min' => $request->read_time_min,
+            'title'          => $request->title,
+            'category'       => $request->category,
+            'tags'           => array_values($tags),
+            'content'        => $request->content,
+            'cover_image_url'=> $request->cover_image_url
+                ?? 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80',
+            'read_time_min'  => $request->read_time_min,
+            'likes'          => 0,
         ]);
 
-        return redirect()->route('blogs.index')->with('success', 'Blog created successfully!');
+        return redirect()->route('blogs.index')->with('success', 'Your story has been published!');
+    }
+
+    public function like(string $id)
+    {
+        $blog = Blog::findOrFail($id);
+        $blog->increment('likes');
+        return response()->json(['likes' => $blog->fresh()->likes]);
     }
 }
