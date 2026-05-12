@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>From My Stove To Yours | Kitchen Archive</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
-    @vite('resources/css/app.css')
-</head>
-<body class="grainy min-h-screen">
+@extends('layouts.app')
 
-<nav class="p-8 max-w-7xl mx-auto flex justify-between items-center animate-fade-in">
-    <div class="text-2xl font-bold tracking-tighter text-vintage-terracotta">
-        STOVE<span class="text-vintage-cream/50">TO</span>YOURS
-    </div>
-    <div class="flex items-center gap-8">
-        <a href="/" class="text-sm font-bold uppercase tracking-widest text-vintage-terracotta border-b-2 border-vintage-terracotta pb-1">Home</a>
-        <a href="/create" class="px-6 py-2 rounded-full bg-vintage-terracotta text-white text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-vintage-terracotta/20">
-            Share Recipe
-        </a>
-    </div>
-</nav>
+@section('title', 'Kitchen Archive')
 
+@section('content')
 <div class="max-w-7xl mx-auto px-6 pt-12 pb-24">
 
     <!-- Hero Section -->
@@ -52,14 +32,43 @@
     </div>
 
     <!-- Top List Section -->
-    <div class="text-center mb-16 space-y-4">
+    <div class="text-center mb-10 space-y-4">
         <h2 class="text-5xl font-bold text-vintage-cream">Top List</h2>
         <p class="text-vintage-cream/40 font-bold uppercase tracking-[0.3em] text-sm">Our mainstay menu</p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-        @foreach($recipes as $recipe)
-        <div class="recipe-card group animate-slide-up" style="animation-delay: {{ $loop->index * 100 }}ms">
+    <!-- Cuisine Filter Bar -->
+    <div class="flex flex-wrap justify-center gap-3 mb-16 animate-fade-in">
+        @php
+            $currentOrigin = request()->segment(2);
+            $cuisines = [
+                ['label' => 'All', 'slug' => null, 'icon' => '🍽️'],
+                ['label' => 'Indian', 'slug' => 'Indian', 'icon' => '🍛'],
+                ['label' => 'Chinese', 'slug' => 'Chinese', 'icon' => '🥡'],
+                ['label' => 'Italian', 'slug' => 'Italian', 'icon' => '🍝'],
+                ['label' => 'Mexican', 'slug' => 'Mexican', 'icon' => '🌮'],
+                ['label' => 'Thai', 'slug' => 'Thai', 'icon' => '🍜'],
+                ['label' => 'American', 'slug' => 'American', 'icon' => '🍔'],
+            ];
+        @endphp
+
+        @foreach($cuisines as $cuisine)
+            @php
+                $isActive = ($cuisine['slug'] === null && !$currentOrigin) || $currentOrigin === $cuisine['slug'];
+                $url = $cuisine['slug'] ? '/sort/' . $cuisine['slug'] : '/';
+            @endphp
+            <a href="{{ $url }}" 
+               class="cuisine-filter-btn {{ $isActive ? 'active' : '' }}">
+                <span class="text-lg">{{ $cuisine['icon'] }}</span>
+                <span>{{ $cuisine['label'] }}</span>
+            </a>
+        @endforeach
+    </div>
+
+    <!-- Recipe Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-24 mt-20">
+        @forelse($recipes as $recipe)
+        <a href="/recipe/{{ $recipe->id }}" class="recipe-card group animate-slide-up block cursor-pointer" style="animation-delay: {{ $loop->index * 100 }}ms">
             <div class="relative -mt-20 mb-8 px-4">
                 <div class="circular-frame shadow-2xl group-hover:scale-105 transition-transform duration-500">
                     <img src="{{ asset('images/'.$recipe->image) }}" 
@@ -79,43 +88,23 @@
                     {{ $recipe->description }}
                 </p>
                 
-                <div class="flex flex-col gap-4 pt-6 border-t border-white/5 mt-4">
-                    <!-- Action Buttons -->
-                    <div class="grid grid-cols-3 gap-2">
-                        <a href="/recipe/{{ $recipe->id }}" 
-                           class="flex items-center justify-center gap-1 py-2 rounded-xl bg-white/5 hover:bg-vintage-terracotta hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            View
-                        </a>
-                        <a href="/edit/{{ $recipe->id }}" 
-                           class="flex items-center justify-center gap-1 py-2 rounded-xl bg-white/5 hover:bg-emerald-500 hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Edit
-                        </a>
-                        <form action="/delete/{{ $recipe->id }}" method="POST" onsubmit="return confirm('Delete this record?')" class="contents">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" 
-                                    class="flex items-center justify-center gap-1 py-2 rounded-xl bg-white/5 hover:bg-red-500 hover:text-white transition-all text-[10px] font-bold uppercase tracking-wider">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                Delete
-                            </button>
-                        </form>
-                    </div>
+                <!-- Cuisine Badge -->
+                <div class="pt-4 border-t border-white/5 mt-4">
+                    <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-vintage-terracotta/10 border border-vintage-terracotta/20 text-vintage-terracotta text-xs font-bold uppercase tracking-widest">
+                        {{ $recipe->origin }} Cuisine
+                    </span>
                 </div>
             </div>
+        </a>
+        @empty
+        <div class="col-span-full text-center py-20 animate-fade-in">
+            <div class="text-6xl mb-6">🍳</div>
+            <h3 class="text-2xl font-bold text-vintage-cream/60 mb-2">No Recipes Found</h3>
+            <p class="text-vintage-cream/30 mb-8">No recipes match this cuisine filter yet.</p>
+            <a href="/" class="btn-terracotta inline-flex">View All Recipes</a>
         </div>
-        @endforeach
+        @endforelse
     </div>
 
 </div>
-
-</body>
-</html>
+@endsection

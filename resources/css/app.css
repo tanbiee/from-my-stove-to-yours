@@ -4,7 +4,7 @@
 
 @layer base {
     body {
-        @apply font-quicksand bg-vintage-dark text-vintage-cream antialiased;
+        @apply font-quicksand bg-[#1a1a1a] text-[#f4e3cf] antialiased;
     }
     h1, h2, h3, h4, h5, h6 {
         @apply font-outfit font-bold;
@@ -13,7 +13,7 @@
 
 @layer components {
     .recipe-card {
-        @apply bg-vintage-dark/40 backdrop-blur-lg border border-white/10 rounded-[3rem] p-6 shadow-2xl transition-all duration-500 hover:-translate-y-2;
+        @apply bg-[#262626] border border-white/5 rounded-[2.5rem] p-6 shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-vintage-terracotta/30;
     }
     
     .btn-vintage {
@@ -21,30 +21,33 @@
     }
     
     .btn-terracotta {
-        @apply btn-vintage bg-vintage-terracotta text-white hover:bg-opacity-90;
+        @apply btn-vintage bg-[#c87941] text-white hover:bg-[#b06a39];
     }
     
     .circular-frame {
-        @apply aspect-square rounded-full overflow-hidden border-8 border-vintage-cream/10 shadow-inner;
+        @apply aspect-square rounded-full overflow-hidden border-[6px] border-white/10 shadow-xl bg-[#333];
     }
     
     .input-vintage {
-        @apply w-full px-6 py-4 bg-vintage-dark/50 border border-white/10 rounded-2xl focus:border-vintage-terracotta focus:ring-2 focus:ring-vintage-terracotta/20 transition-all outline-none text-vintage-cream;
+        @apply w-full px-6 py-4 bg-[#262626] border border-white/10 rounded-2xl focus:border-vintage-terracotta focus:ring-2 focus:ring-vintage-terracotta/20 transition-all outline-none text-vintage-cream;
+    }
+
+    .cuisine-filter-btn {
+        @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-vintage-cream/60 text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:border-vintage-terracotta hover:text-vintage-terracotta hover:bg-vintage-terracotta/10;
+    }
+
+    .cuisine-filter-btn.active {
+        @apply bg-[#c87941] text-white border-[#c87941] shadow-lg shadow-vintage-terracotta/20;
     }
 }
 
-/* Old school grain effect */
+/* Background texture instead of absolute overlay */
 .grainy {
-    position: relative;
-}
-.grainy::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 50;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    background-color: #1a1a1a;
 }
 
 /* Custom scrollbar */
