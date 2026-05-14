@@ -1,19 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\BlogController;
 
-Route::get('/', [RecipeController::class, 'index']);
+Route::get('/', function () {
+    return redirect()->route('blogs.index');
+});
 
-Route::get('/create', [RecipeController::class, 'create']);
-
-Route::post('/store', [RecipeController::class, 'store']);
-
-Route::get('/recipe/{id}', [RecipeController::class, 'show']);
-
-Route::get('/edit/{id}', [RecipeController::class, 'edit']);
-
-Route::put('/update/{id}', [RecipeController::class, 'update']);
-
-Route::delete('/delete/{id}', [RecipeController::class, 'destroy']);
-Route::get('/sort/{origin}', [RecipeController::class, 'sort']);
+Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/create', [BlogController::class, 'create'])->name('blogs.create');
+Route::post('/blogs', [BlogController::class, 'store'])->name('blogs.store');
+Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
+Route::post('/blogs/{id}/like', [BlogController::class, 'like'])->name('blogs.like');

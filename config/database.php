@@ -44,12 +44,6 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
-        'mongodb' => [
-            'driver' => 'mongodb',
-            'dsn' => env('DB_URI'),
-            'database' => env('DB_DATABASE'),
-        ],
-
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
@@ -118,6 +112,12 @@ return [
             'prefix_indexes' => true,
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+        ],
+
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'dsn' => env('DB_URI', 'mongodb+srv://tanvi200414_db_user:tanbiee@cluster0.yocsczd.mongodb.net/?appName=Cluster0'),
+            'database' => env('DB_DATABASE', 'from_my_stove_to_yours'),
         ],
 
     ],
