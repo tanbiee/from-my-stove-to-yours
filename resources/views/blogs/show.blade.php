@@ -89,7 +89,7 @@
         @endif
 
         {{-- The content --}}
-        <div style="font-size:1.08rem; line-height:1.9; color:var(--charcoal); font-family:'Inter',sans-serif;">
+        <div style="font-size:1.08rem; line-height:1.9; color:var(--charcoal); font-family:'Quicksand',sans-serif;">
             {!! nl2br(e($blog->content)) !!}
         </div>
 
@@ -173,7 +173,7 @@
                          style="width:80px; height:80px; object-fit:cover; flex-shrink:0;"
                          onerror="this.src='https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=200&q=60'">
                     <div style="padding:.65rem .8rem; display:flex; flex-direction:column; justify-content:center;">
-                        <p style="font-family:'Cormorant Garamond',serif; font-size:.95rem; font-weight:600; color:var(--ink); line-height:1.3; margin:0 0 .3rem;">
+                        <p style="font-family:'Outfit',sans-serif; font-size:.95rem; font-weight:600; color:var(--ink); line-height:1.3; margin:0 0 .3rem;">
                             {{ Str::limit($r->title, 50) }}
                         </p>
                         <span style="font-size:.72rem; color:var(--warm-gray);">{{ $r->read_time_min }} min read</span>
