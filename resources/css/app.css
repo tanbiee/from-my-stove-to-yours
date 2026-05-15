@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-quicksand bg-[#1a1a1a] text-[#f4e3cf] antialiased;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-outfit font-bold;
+    }
+}
+
+@layer components {
+    .recipe-card {
+        @apply bg-[#262626] border border-white/5 rounded-[2.5rem] p-6 shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-vintage-terracotta/30;
+    }
+    
+    .btn-vintage {
+        @apply px-8 py-3 rounded-full font-bold transition-all duration-300 active:scale-95 shadow-lg flex items-center justify-center gap-2;
+    }
+    
+    .btn-terracotta {
+        @apply btn-vintage bg-[#c87941] text-white hover:bg-[#b06a39];
+    }
+    
+    .circular-frame {
+        @apply aspect-square rounded-full overflow-hidden border-[6px] border-white/10 shadow-xl bg-[#333];
+    }
+    
+    .input-vintage {
+        @apply w-full px-6 py-4 bg-[#262626] border border-white/10 rounded-2xl focus:border-vintage-terracotta focus:ring-2 focus:ring-vintage-terracotta/20 transition-all outline-none text-vintage-cream;
+    }
+
+    .cuisine-filter-btn {
+        @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/5 text-vintage-cream/60 text-xs font-bold uppercase tracking-widest transition-all duration-300 hover:border-vintage-terracotta hover:text-vintage-terracotta hover:bg-vintage-terracotta/10;
+    }
+
+    .cuisine-filter-btn.active {
+        @apply bg-[#c87941] text-white border-[#c87941] shadow-lg shadow-vintage-terracotta/20;
+    }
+}
+
+/* Background texture instead of absolute overlay */
+.grainy {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    background-color: #1a1a1a;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+    background: #c87941;
+    border-radius: 10px;
+}
