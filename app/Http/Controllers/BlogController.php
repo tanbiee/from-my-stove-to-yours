@@ -129,6 +129,8 @@ class BlogController extends Controller
                 ?? 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80',
             'read_time_min'  => $request->read_time_min,
             'likes'          => 0,
+            'user_id'        => auth()->id(),
+            'liked_by'       => [],
         ]);
 
         return redirect()->route('blogs.index')->with('success', 'Your story has been published!');
@@ -137,7 +139,70 @@ class BlogController extends Controller
     public function like(string $id)
     {
         $blog = Blog::findOrFail($id);
-        $blog->increment('likes');
-        return response()->json(['likes' => $blog->fresh()->likes]);
+        $userId = auth()->id();
+        
+        $likedBy = $blog->liked_by ?? [];
+        if (!in_array($userId, $likedBy)) {
+            $likedBy[] = $userId;
+            $blog->liked_by = $likedBy;
+            $blog->likes = count($likedBy);
+            $blog->save();
+        } else {
+            $likedBy = array_diff($likedBy, [$userId]);
+            $blog->liked_by = array_values($likedBy);
+            $blog->likes = count($blog->liked_by);
+            $blog->save();
+        }
+        
+        return response()->json(['likes' => $blog->likes]);
+    }
+
+    public function edit(string $id)
+    {
+        $blog = Blog::findOrFail($id);
+        if ($blog->user_id !== auth()->id()) abort(403);
+        
+        return view('blogs.edit', compact('blog'))->with('categories', self::$categories);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $blog = Blog::findOrFail($id);
+        if ($blog->user_id !== auth()->id()) abort(403);
+
+        $request->validate([
+            'title'          => 'required|string|max:255',
+            'category'       => 'required|string',
+            'tags'           => 'nullable|string',
+            'content'        => 'required|string',
+            'cover_image_url'=> 'nullable|url',
+            'read_time_min'  => 'required|integer|min:1',
+        ]);
+
+        $tags = [];
+        if ($request->filled('tags')) {
+            $tags = array_map('trim', explode(',', $request->tags));
+            $tags = array_filter($tags);
+        }
+
+        $blog->update([
+            'title'          => $request->title,
+            'category'       => $request->category,
+            'tags'           => array_values($tags),
+            'content'        => $request->content,
+            'cover_image_url'=> $request->cover_image_url ?: $blog->cover_image_url,
+            'read_time_min'  => $request->read_time_min,
+        ]);
+
+        return redirect()->route('blogs.show', $blog->_id)->with('success', 'Blog updated successfully!');
+    }
+
+    public function destroy(string $id)
+    {
+        $blog = Blog::findOrFail($id);
+        if ($blog->user_id !== auth()->id()) abort(403);
+        
+        $blog->delete();
+        return redirect()->route('profile.edit')->with('success', 'Blog deleted successfully!');
     }
 }

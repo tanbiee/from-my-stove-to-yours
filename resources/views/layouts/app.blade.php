@@ -351,7 +351,7 @@
 
         .card-meta {
             font-size: .78rem;
-            color: #a39585;
+            color: #61584c;
             display: flex;
             align-items: center;
             gap: .35rem;
@@ -365,7 +365,7 @@
             align-items: center;
             gap: .3rem;
             font-size: .78rem;
-            color: #a39585;
+            color: #61584c;
             padding: .3rem .5rem;
             border-radius: .4rem;
             transition: color .2s, background .2s;
@@ -413,16 +413,21 @@
                     style="height: 60px; width: auto; object-fit: contain; transform: scale(1.5); transform-origin: left center;">
             </a>
             <div class="nav-links">
-                <a href="{{ route('blogs.index') }}" class="active">Explore</a>
-                <a href="#">Cuisines</a>
-                <a href="#">About</a>
-                <a href="{{ route('blogs.create') }}" class="btn-gold" style="padding:.5rem 1.2rem;font-size:.82rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Write a Story
-                </a>
+                <a href="{{ route('dashboard') }}">Dashboard</a>
+                <a href="{{ route('blogs.index') }}" class="{{ request()->routeIs('blogs.*') ? 'active' : '' }}">Blogs</a>
+                
+                @auth
+                    <a href="{{ route('profile.edit') }}">Profile</a>
+                    <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                        @csrf
+                        <button type="submit" style="background:none; border:none; color:#c8bfaf; font-size:.875rem; font-weight:500; font-family:inherit; cursor:pointer;" onmouseover="this.style.color='var(--gold-light)'" onmouseout="this.style.color='#c8bfaf'">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}">Log in</a>
+                    <a href="{{ route('register') }}" class="btn-outline">Register</a>
+                @endauth
                 <button id="themeToggle"
                     style="background:none; border:none; cursor:pointer; font-size:1.2rem; color:#c8bfaf;"
                     title="Toggle Theme">
@@ -445,6 +450,7 @@
         @endif
 
         @yield('content')
+        {{ $slot ?? '' }}
     </main>
 
     <!-- Footer -->

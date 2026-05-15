@@ -18,11 +18,12 @@ class Blog extends Model
         'is_featured',
         'read_time_min',
         'likes',
+        'user_id',
+        'liked_by',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
         'likes'       => 'integer',
-        'tags'        => 'array',
     ];
 }

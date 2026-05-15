@@ -67,6 +67,16 @@
         @if($currentSearch || $currentCategory || $currentSort !== 'newest')
             <a href="{{ route('blogs.index') }}" class="btn-outline">Clear</a>
         @endif
+
+        <div style="flex-grow: 1;"></div>
+        
+        <a href="{{ route('blogs.create') }}" class="btn-gold" style="padding:.5rem 1.2rem;font-size:.82rem; margin-left: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Write a Story
+        </a>
     </div>
 
     {{-- Active filter pills --}}
@@ -277,7 +287,7 @@
                 </div>
 
                 {{-- Like button (stop propagation so card click doesn't fire) --}}
-                <button class="like-btn" onclick="event.stopPropagation(); likeBlog(this, '{{ $blog->_id }}')" title="Like this post">
+                <button class="like-btn {{ is_array($blog->liked_by) && in_array(auth()->id(), $blog->liked_by) ? 'liked' : '' }}" onclick="event.stopPropagation(); likeBlog(this, '{{ $blog->_id }}')" title="Like this post">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
@@ -334,7 +344,7 @@
 
     // Like function
     function likeBlog(btn, id) {
-        btn.classList.add('liked');
+        btn.classList.toggle('liked');
         fetch(`/blogs/${id}/like`, {
             method: 'POST',
             headers: {

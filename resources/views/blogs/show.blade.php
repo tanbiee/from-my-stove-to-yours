@@ -96,12 +96,13 @@
         {{-- Like + Share bar --}}
         <div style="margin-top:3rem; padding:1.5rem 2rem; background:var(--card-bg); border-radius:1.1rem; border:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
             <div style="display:flex; align-items:center; gap:1rem;">
-                <button id="likeBtn" onclick="likePost()" title="Like this post"
+                @php $isLiked = is_array($blog->liked_by) && in_array(auth()->id(), $blog->liked_by); @endphp
+                <button id="likeBtn" onclick="likePost()" title="Like this post" class="{{ $isLiked ? 'liked' : '' }}"
                         style="display:flex; align-items:center; gap:.5rem; padding:.6rem 1.4rem;
-                               border:1.5px solid var(--border-light); border-radius:99px; background:var(--card-bg);
-                               color:var(--warm-gray); font-size:.9rem; font-weight:500; cursor:pointer;
+                               border:1.5px solid {{ $isLiked ? 'var(--gold)' : 'var(--border-light)' }}; border-radius:99px; background:var(--card-bg);
+                               color:{{ $isLiked ? '#e05a5a' : 'var(--warm-gray)' }}; font-size:.9rem; font-weight:500; cursor:pointer;
                                transition:all .2s;">
-                    <svg id="likeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg id="likeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="{{ $isLiked ? '#e05a5a' : 'none' }}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
                     <span id="likeText"><span id="likeCount">{{ $blog->likes ?? 0 }}</span> Likes</span>
@@ -195,10 +196,16 @@ function likePost() {
     const countEl = document.getElementById('likeCount');
     const heroCountEl = document.getElementById('heroLikeCount');
 
-    btn.style.borderColor = 'var(--gold)';
-    btn.style.color = '#e05a5a';
-    icon.setAttribute('fill', '#e05a5a');
-    icon.setAttribute('stroke', '#e05a5a');
+    const isLiked = btn.classList.toggle('liked');
+    if (isLiked) {
+        btn.style.borderColor = 'var(--gold)';
+        btn.style.color = '#e05a5a';
+        icon.setAttribute('fill', '#e05a5a');
+    } else {
+        btn.style.borderColor = 'var(--border-light)';
+        btn.style.color = 'var(--warm-gray)';
+        icon.setAttribute('fill', 'none');
+    }
 
     fetch(`/blogs/${blogId}/like`, {
         method: 'POST',
