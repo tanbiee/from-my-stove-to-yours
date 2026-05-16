@@ -8,6 +8,9 @@
         <h1 class="serif" style="font-size:2.8rem; font-weight:600; color:var(--ink); line-height:1.1; margin-bottom:.6rem;">
             {{ $user->name }}'s Profile
         </h1>
+        <div style="margin-top:1rem;">
+            <a href="{{ route('recipes.create') }}" class="btn-gold" style="padding:.6rem .9rem; border-radius:.6rem;">Share a Recipe</a>
+        </div>
     </div>
 
     {{-- WRITTEN BLOGS --}}

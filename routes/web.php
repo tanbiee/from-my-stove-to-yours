@@ -3,11 +3,15 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\RecipeController;
 
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
+// Public landing page: list all recipes
+Route::get('/', [RecipeController::class, 'index'])->name('home');
 
+// Auth'd dashboard (keeps original protected dashboard route)
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -26,6 +30,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/blogs/{id}', [BlogController::class, 'destroy'])->name('blogs.destroy');
     Route::get('/blogs/{id}', [BlogController::class, 'show'])->name('blogs.show');
     Route::post('/blogs/{id}/like', [BlogController::class, 'like'])->name('blogs.like');
+
+    // Recipe creation/editing is only for authenticated users
+    Route::get('/create', [RecipeController::class, 'create'])->name('recipes.create');
+    Route::post('/store', [RecipeController::class, 'store'])->name('recipes.store');
+    Route::get('/edit/{id}', [RecipeController::class, 'edit'])->name('recipes.edit');
+    Route::put('/update/{id}', [RecipeController::class, 'update'])->name('recipes.update');
+    Route::delete('/delete/{id}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
 });
+
+// Public recipe routes
+Route::get('/recipe/{id}', [RecipeController::class, 'show'])->name('recipes.show');
+Route::get('/sort/{origin}', [RecipeController::class, 'sort'])->name('recipes.sort');
 
 require __DIR__ . '/auth.php';
