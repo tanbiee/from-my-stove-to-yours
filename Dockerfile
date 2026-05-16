@@ -26,7 +26,8 @@ COPY . .
 
 RUN composer install --no-interaction --no-dev --optimize-autoloader --prefer-dist
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 80
 CMD ["apache2-foreground"]
