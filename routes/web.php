@@ -8,13 +8,10 @@ use App\Http\Controllers\RecipeController;
 // Public landing page: list all recipes
 Route::get('/', [RecipeController::class, 'index'])->name('home');
 
-// Auth'd dashboard (keeps original protected dashboard route)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Auth'd dashboard: show recipes for authenticated users
+Route::get('/dashboard', [RecipeController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

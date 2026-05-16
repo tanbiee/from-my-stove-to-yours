@@ -26,7 +26,7 @@
                     <div class="card-body">
                         <h3 class="card-title" style="font-size:1.15rem;">{{ $blog->title }}</h3>
                         <p class="card-excerpt" style="font-size:.8rem;">{{ Str::limit($blog->content, 80) }}</p>
-                        
+
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; border-top:1px solid #f0e8da; padding-top:.8rem;">
                             <span class="card-meta">❤️ {{ $blog->likes ?? 0 }} likes</span>
                             <div style="display:flex; gap:.5rem;">
@@ -81,12 +81,12 @@
         </h2>
 
         <div style="display:grid; grid-template-columns:1fr; gap:2rem;">
-            
+
             {{-- Update Profile Info --}}
             <div style="background:var(--card-bg); border-radius:1.4rem; padding:2rem; border:1px solid var(--border-light); box-shadow:0 4px 24px rgba(26,18,9,.04);">
                 <h3 class="serif" style="font-size:1.4rem; font-weight:600; color:var(--ink); margin-bottom:.5rem;">Profile Information</h3>
                 <p style="color:var(--warm-gray); font-size:.85rem; margin-bottom:1.5rem;">Update your account's profile information and email address.</p>
-                
+
                 <form method="post" action="{{ route('profile.update') }}">
                     @csrf
                     @method('patch')
@@ -111,7 +111,7 @@
             <div style="background:var(--card-bg); border-radius:1.4rem; padding:2rem; border:1px solid var(--border-light); box-shadow:0 4px 24px rgba(26,18,9,.04);">
                 <h3 class="serif" style="font-size:1.4rem; font-weight:600; color:var(--ink); margin-bottom:.5rem;">Update Password</h3>
                 <p style="color:var(--warm-gray); font-size:.85rem; margin-bottom:1.5rem;">Ensure your account is using a long, random password to stay secure.</p>
-                
+
                 <form method="post" action="{{ route('password.update') }}">
                     @csrf
                     @method('put')
@@ -141,7 +141,7 @@
             <div style="background:var(--card-bg); border-radius:1.4rem; padding:2rem; border:1px solid #eab8b4; box-shadow:0 4px 24px rgba(26,18,9,.04);">
                 <h3 class="serif" style="font-size:1.4rem; font-weight:600; color:#c0392b; margin-bottom:.5rem;">Delete Account</h3>
                 <p style="color:var(--warm-gray); font-size:.85rem; margin-bottom:1.5rem;">Once your account is deleted, all of its resources and data will be permanently deleted.</p>
-                
+
                 <form method="post" action="{{ route('profile.destroy') }}" onsubmit="return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.');">
                     @csrf
                     @method('delete')
