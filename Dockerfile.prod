@@ -1,15 +1,3 @@
-FROM node:20-bullseye AS frontend
-WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential python3 \
-    && rm -rf /var/lib/apt/lists/* \
-    && npm ci --prefer-offline --no-audit --progress=false
-COPY resources ./resources
-COPY public ./public
-COPY vite.config.js postcss.config.js tailwind.config.js ./
-RUN npm run build
-
 FROM php:8.2-apache AS app
 
 RUN apt-get update && apt-get install -y \
@@ -34,11 +22,15 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 
 WORKDIR /var/www/html
 
+# Install PHP dependencies (will run inside the image)
 COPY composer.json composer.lock* ./
 RUN composer install --no-interaction --no-dev --optimize-autoloader --prefer-dist
 
+# Copy application code
 COPY . .
-COPY --from=frontend /app/public/build ./public/build
+
+# Expect frontend build to be present at public/build
+# If you build locally, ensure `public/build` is present before building this image.
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
