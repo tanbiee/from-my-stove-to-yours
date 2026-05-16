@@ -16,8 +16,18 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        
+        // Fetch written blogs
+        $writtenBlogs = \App\Models\Blog::where('user_id', $user->id)->latest()->get();
+        
+        // Fetch liked blogs
+        $likedBlogs = \App\Models\Blog::where('liked_by', $user->id)->latest()->get();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'writtenBlogs' => $writtenBlogs,
+            'likedBlogs' => $likedBlogs,
         ]);
     }
 
