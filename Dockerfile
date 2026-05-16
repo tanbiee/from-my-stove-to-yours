@@ -1,7 +1,7 @@
-FROM node:20-alpine AS frontend
+FROM node:20-bullseye AS frontend
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN npm ci --prefer-offline --no-audit --progress=false
 COPY resources ./resources
 COPY public ./public
 COPY vite.config.js postcss.config.js tailwind.config.js ./
