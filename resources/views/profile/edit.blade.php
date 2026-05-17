@@ -21,7 +21,7 @@
         @if($writtenBlogs->isNotEmpty())
             <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(310px,1fr)); gap:1.5rem;">
                 @foreach($writtenBlogs as $blog)
-                <article class="card" style="position:relative;">
+                <article class="card" onclick="window.location='{{ route('blogs.show', $blog->_id) }}'" style="position:relative; cursor:pointer;">
                     <img src="{{ $blog->cover_image_url }}" alt="{{ $blog->title }}" class="card-img" style="height:160px;">
                     <div class="card-body">
                         <h3 class="card-title" style="font-size:1.15rem;">{{ $blog->title }}</h3>
@@ -30,8 +30,8 @@
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; border-top:1px solid #f0e8da; padding-top:.8rem;">
                             <span class="card-meta">❤️ {{ $blog->likes ?? 0 }} likes</span>
                             <div style="display:flex; gap:.5rem;">
-                                <a href="{{ route('blogs.edit', $blog->_id) }}" class="btn-outline" style="padding:.3rem .8rem; font-size:.7rem;">Edit</a>
-                                <form action="{{ route('blogs.destroy', $blog->_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this story?');">
+                                <a href="{{ route('blogs.edit', $blog->_id) }}" onclick="event.stopPropagation();" class="btn-outline" style="padding:.3rem .8rem; font-size:.7rem;">Edit</a>
+                                <form action="{{ route('blogs.destroy', $blog->_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this story?');" onclick="event.stopPropagation();">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn-outline" style="padding:.3rem .8rem; font-size:.7rem; color:#c0392b; border-color:#eab8b4;">Delete</button>

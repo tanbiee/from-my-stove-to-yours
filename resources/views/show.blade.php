@@ -18,6 +18,7 @@
 
     <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
         <a href="/" style="color:var(--gold); font-weight:700; text-decoration:none;">← Back to recipes</a>
+        @if(!$recipe->user_id || $recipe->user_id === auth()->id())
         <div style="display:flex; gap:.75rem; flex-wrap:wrap;">
             <a href="{{ route('recipes.edit', $recipe->id) }}" class="btn-gold" style="padding:.75rem 1rem; border-radius:.85rem;">Edit</a>
             <form action="{{ route('recipes.destroy', $recipe->id) }}" method="POST" onsubmit="return confirm('Delete this recipe permanently?')">
@@ -26,6 +27,7 @@
                 <button type="submit" class="btn-gold" style="padding:.75rem 1rem; border:none; border-radius:.85rem; background:#b04a4a;">Delete</button>
             </form>
         </div>
+        @endif
     </div>
 
     <div style="display:grid; grid-template-columns:1fr; gap:1.5rem;">

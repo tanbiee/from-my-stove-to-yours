@@ -17,6 +17,7 @@ class Recipe extends Eloquent
         'process',
         'origin',
         'rating',
-        'image'
+        'image',
+        'user_id'
     ];
 }

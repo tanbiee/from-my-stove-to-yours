@@ -58,6 +58,7 @@ class RecipeController extends Controller
             'origin' => $request->origin,
             'rating' => $request->rating,
             'image' => $request->image,
+            'user_id' => auth()->id(),
         ]);
 
         Mail::to('pathaniadeepti05@gmail.com')->send(new RecipeAddedMail($request->title));
@@ -75,6 +76,7 @@ class RecipeController extends Controller
     public function edit($id)
     {
         $recipe = Recipe::find($id);
+        if ($recipe->user_id && $recipe->user_id !== auth()->id()) abort(403);
 
         return view('edit', compact('recipe'));
     }
@@ -82,6 +84,7 @@ class RecipeController extends Controller
     public function update(Request $request, $id)
     {
         $recipe = Recipe::find($id);
+        if ($recipe->user_id && $recipe->user_id !== auth()->id()) abort(403);
 
         $request->validate([
             'title' => 'required',
@@ -114,6 +117,7 @@ class RecipeController extends Controller
         $recipe = Recipe::find($id);
 
         if ($recipe) {
+            if ($recipe->user_id && $recipe->user_id !== auth()->id()) abort(403);
             $recipe->delete();
         }
 
