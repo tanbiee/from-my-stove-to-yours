@@ -30,7 +30,7 @@ COPY . .
 
 RUN composer install --no-interaction --no-dev --optimize-autoloader --prefer-dist
 
-RUN npm install && npm run build
+RUN rm -f package-lock.json && npm install && npm run build
 
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
