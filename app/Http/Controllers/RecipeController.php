@@ -61,12 +61,6 @@ class RecipeController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        try {
-            Mail::to('pathaniadeepti05@gmail.com')->send(new RecipeAddedMail($request->title));
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send recipe added email: ' . $e->getMessage());
-        }
-
         return redirect('/')->with('success', 'Recipe Added Successfully');
     }
 
